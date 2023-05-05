@@ -5,7 +5,7 @@ const vite_1 = require("vite");
 const constants_1 = require("./constants");
 const plugin_react_1 = require("@vitejs/plugin-react");
 const path = require("path");
-const fs = require("fs");
+const fs = require("fs-extra");
 const renderPage = async (render, root, clientBundle) => {
     const clientChunk = clientBundle.output.find(chunk => chunk.type === 'chunk' && chunk.isEntry);
     const appHtml = render();

@@ -1,6 +1,7 @@
 import {build as viteBuild, InlineConfig} from "vite";
 import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from "./constants";
 import pluginReact from "@vitejs/plugin-react";
+import type { RollupOutput } from 'rollup';
 import * as path from "path";
 import * as fs from "fs-extra";
 
@@ -47,7 +48,7 @@ export const bundle = async (root: string) => {
       viteBuild(resolveViteConfig(false)),
       viteBuild(resolveViteConfig(true)),
     ])
-    return [clientBundle, serverBundle];
+    return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
   } catch (e) {
     console.log(e);
   }
@@ -62,5 +63,4 @@ export const build = async (root: string) => {
   } catch (e) {
     console.log(e);
   }
-
 };
