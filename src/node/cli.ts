@@ -1,4 +1,5 @@
 import { createDevServer } from './dev';
+import { build } from './build';
 import * as path from 'path';
 
 const cli = require('cac')()
@@ -14,7 +15,12 @@ cli.command('dev [root]', 'start dev server').action(async (root: string) => {
 });
 
 cli.command('build [root]', 'build for production').action(async (root: string) => {
-  console.log('build', root);
+  try {
+    root = root ? path.resolve(root) : process.cwd();
+    await build(root);
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 cli.parse();
