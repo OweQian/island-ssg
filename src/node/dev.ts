@@ -5,6 +5,6 @@ import pluginReact from '@vitejs/plugin-react';
 export async function createDevServer(root: string) {
   return createServer({
     root,
-    plugins: [pluginIndexHtml(), pluginReact()],
-  })
+    plugins: [pluginIndexHtml(), pluginReact()]
+  });
 }

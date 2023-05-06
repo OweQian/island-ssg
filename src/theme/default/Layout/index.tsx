@@ -10,5 +10,5 @@ export function Layout() {
         <button onClick={() => setCount(count + 1)}>Add Count</button>
       </div>
     </div>
-  )
+  );
 }

@@ -7,6 +7,6 @@ const renderInBrowser = () => {
     throw new Error('#root element not found');
   }
   createRoot(container).render(<App />);
-}
+};
 
 renderInBrowser();

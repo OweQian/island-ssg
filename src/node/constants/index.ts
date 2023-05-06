@@ -6,14 +6,14 @@ export const DEFAULT_HTML_PATH = join(PACKAGE_ROOT, 'template.html');
 
 export const CLIENT_ENTRY_PATH = join(
   PACKAGE_ROOT,
-  "src",
-  "runtime",
-  "client-entry.tsx"
+  'src',
+  'runtime',
+  'client-entry.tsx'
 );
 
 export const SERVER_ENTRY_PATH = join(
   PACKAGE_ROOT,
-  "src",
-  "runtime",
-  "ssr-entry.tsx"
+  'src',
+  'runtime',
+  'ssr-entry.tsx'
 );
