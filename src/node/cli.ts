@@ -1,11 +1,9 @@
 import { createDevServer } from './dev';
 import { build } from './build';
 import * as path from 'path';
+import cac from "cac";
 
-const cli = require('cac')()
-const version = require('../../package.json').version;
-
-cli.version(version).help();
+const cli = cac('island').version('0.0.1').help(); 
 
 cli.command('dev [root]', 'start dev server').action(async (root: string) => {
   root = root ? path.resolve(root) : process.cwd();

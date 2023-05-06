@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc -w",
+    "start": "tsup --watch",
+    "build": "tsup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,12 +14,16 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
     "@types/node": "^18.16.2",
-    "typescript": "^5.0.4",
+    "rollup": "^3.2.3",
     "serve": "^14.2.0",
-    "rollup": "^3.2.3"
+    "tsup": "^6.7.0",
+    "@types/react": "^18.0.24",
+    "@types/react-dom": "^18.0.8",
+    "typescript": "^5.0.4"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.0.0",
+    "ora": "^6.3.0",
     "cac": "^6.7.14",
     "fs-extra": "^11.1.1",
     "react": "^18.2.0",

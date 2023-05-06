@@ -1,9 +1,11 @@
 import {build as viteBuild, InlineConfig} from "vite";
 import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from "./constants";
 import pluginReact from "@vitejs/plugin-react";
+import { pathToFileURL } from 'url';
 import type { RollupOutput } from 'rollup';
 import * as path from "path";
-import * as fs from "fs-extra";
+import ora from "ora";
+import fs from "fs-extra";
 
 export const renderPage = async (render: () => string, root: string, clientBundle: RollupOutput) => {
   const clientChunk = clientBundle.output.find(chunk => chunk.type === 'chunk' && chunk.isEntry);
@@ -43,6 +45,7 @@ export const bundle = async (root: string) => {
       }
     }
   })
+  const spinner = ora();
   try {
     const [clientBundle, serverBundle] = await Promise.all([
       viteBuild(resolveViteConfig(false)),
@@ -58,7 +61,7 @@ export const build = async (root: string) => {
   try {
     const [clientBundle, serverBundle] = await bundle(root);
     const serverEntryPath = path.join(root, '.temp', 'ssr-entry.js');
-    const { render } = require(serverEntryPath);
+    const { render } = (await import(pathToFileURL(serverEntryPath)));
     await renderPage(render, root, clientBundle);
   } catch (e) {
     console.log(e);
