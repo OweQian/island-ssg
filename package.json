@@ -7,7 +7,9 @@
     "start": "tsup --watch",
     "build": "tsup",
     "lint": "eslint --fix --ext .ts,.tsx,.js,.jsx --quiet ./",
-    "test:init": "vitest --ui"
+    "test:init": "vitest --ui",
+    "test:e2e": "playwright test",
+    "prepare:e2e": "tsx scripts/prepare-e2e.ts"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",
     "@commitlint/config-conventional": "^17.6.3",
+    "@playwright/test": "1.26.1",
     "@types/fs-extra": "^11.0.1",
     "@types/node": "^18.16.2",
     "@types/react": "^18.0.24",
@@ -26,11 +29,13 @@
     "eslint": "^8.40.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "execa": "^7.1.1",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
     "rollup": "^3.2.3",
     "serve": "^14.2.0",
     "tsup": "^6.7.0",
+    "tsx": "^3.12.7",
     "typescript": "^5.0.4",
     "vitest": "^0.31.0"
   },
