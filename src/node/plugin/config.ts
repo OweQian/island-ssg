@@ -1,16 +1,27 @@
-import { relative } from 'path';
+import path, { relative } from 'path';
 import { Plugin, ViteDevServer } from 'vite';
+import { PACKAGE_ROOT } from '../constants';
 import { ISiteConfig } from '../config';
 
 const SITE_DATA_ID = 'island:site-data';
 
 export const pluginConfig = (
   config: ISiteConfig,
-  restartServer: () => Promise<void>
+  restartServer?: () => Promise<void>
 ): Plugin => {
   let server: ViteDevServer | null = null;
   return {
     name: 'island:config',
+    config() {
+      return {
+        root: PACKAGE_ROOT,
+        resolve: {
+          alias: {
+            '@runtime': path.join(PACKAGE_ROOT, 'src', 'runtime', 'index.ts')
+          }
+        }
+      };
+    },
     configureServer(s) {
       server = s;
     },

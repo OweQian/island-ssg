@@ -6,6 +6,8 @@ import type { RollupOutput } from 'rollup';
 import * as path from 'path';
 import ora from 'ora';
 import fs from 'fs-extra';
+import { ISiteConfig } from './config';
+import { pluginConfig } from './plugin/config';
 
 export const renderPage = async (
   render: () => string,
@@ -35,14 +37,18 @@ export const renderPage = async (
   await fs.remove(path.join(root, '.temp'));
 };
 
-export const bundle = async (root: string) => {
+export const bundle = async (root: string, config: ISiteConfig) => {
   const resolveViteConfig = (isServer: boolean): InlineConfig => ({
     mode: 'production',
     root,
-    plugins: [pluginReact()],
+    plugins: [pluginReact(), pluginConfig(config)],
+    ssr: {
+      noExternal: ['react-router-dom']
+    },
     build: {
+      minify: false,
       ssr: isServer,
-      outDir: isServer ? '.temp' : 'build',
+      outDir: isServer ? path.join(root, '.temp') : 'build',
       rollupOptions: {
         input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
         output: {
@@ -63,13 +69,13 @@ export const bundle = async (root: string) => {
   }
 };
 
-export const build = async (root: string) => {
+export const build = async (root: string, config: ISiteConfig) => {
+  const [clientBundle] = await bundle(root, config);
+  const serverEntryPath = path.join(root, '.temp', 'ssr-entry.js');
+  const { render } = await import(pathToFileURL(serverEntryPath));
   try {
-    const [clientBundle, serverBundle] = await bundle(root);
-    const serverEntryPath = path.join(root, '.temp', 'ssr-entry.js');
-    const { render } = await import(pathToFileURL(serverEntryPath));
     await renderPage(render, root, clientBundle);
   } catch (e) {
-    console.log(e);
+    console.log('Render page error.\n', e);
   }
 };

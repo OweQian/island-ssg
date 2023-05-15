@@ -1,8 +1,11 @@
 import {
   CLIENT_ENTRY_PATH,
-  SERVER_ENTRY_PATH
-} from "./chunk-BZ6TZHJX.mjs";
-import "./chunk-H5GV5IEL.mjs";
+  SERVER_ENTRY_PATH,
+  pluginConfig
+} from "./chunk-C2WWN3RH.mjs";
+import {
+  resolveConfig
+} from "./chunk-CVJ42XEY.mjs";
 
 // src/node/build.ts
 import { build as viteBuild } from "vite";
@@ -34,14 +37,18 @@ var renderPage = async (render, root, clientBundle) => {
   await fs.writeFile(path.join(root, "build/index.html"), html);
   await fs.remove(path.join(root, ".temp"));
 };
-var bundle = async (root) => {
+var bundle = async (root, config) => {
   const resolveViteConfig = (isServer) => ({
     mode: "production",
     root,
-    plugins: [pluginReact()],
+    plugins: [pluginReact(), pluginConfig(config)],
+    ssr: {
+      noExternal: ["react-router-dom"]
+    },
     build: {
+      minify: false,
       ssr: isServer,
-      outDir: isServer ? ".temp" : "build",
+      outDir: isServer ? path.join(root, ".temp") : "build",
       rollupOptions: {
         input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
         output: {
@@ -61,14 +68,14 @@ var bundle = async (root) => {
     console.log(e);
   }
 };
-var build = async (root) => {
+var build = async (root, config) => {
+  const [clientBundle] = await bundle(root, config);
+  const serverEntryPath = path.join(root, ".temp", "ssr-entry.js");
+  const { render } = await import(pathToFileURL(serverEntryPath));
   try {
-    const [clientBundle, serverBundle] = await bundle(root);
-    const serverEntryPath = path.join(root, ".temp", "ssr-entry.js");
-    const { render } = await import(pathToFileURL(serverEntryPath));
     await renderPage(render, root, clientBundle);
   } catch (e) {
-    console.log(e);
+    console.log("Render page error.\n", e);
   }
 };
 
@@ -78,7 +85,7 @@ import cac from "cac";
 var cli = cac("island").version("0.0.1").help();
 cli.command("dev [root]", "start dev server").action(async (root) => {
   const createServer = async () => {
-    const { createDevServer } = await import("./dev-ZUTSSC6S.mjs");
+    const { createDevServer } = await import("./dev.mjs");
     root = root ? path2.resolve(root) : process.cwd();
     const server = await createDevServer(root, async () => {
       await server.close();
@@ -92,7 +99,8 @@ cli.command("dev [root]", "start dev server").action(async (root) => {
 cli.command("build [root]", "build for production").action(async (root) => {
   try {
     root = root ? path2.resolve(root) : process.cwd();
-    await build(root);
+    const config = await resolveConfig(root, "build", "production");
+    await build(root, config);
   } catch (e) {
     console.log(e);
   }

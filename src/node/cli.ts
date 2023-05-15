@@ -1,4 +1,5 @@
 import { build } from './build';
+import { resolveConfig } from './config';
 import * as path from 'path';
 import cac from 'cac';
 
@@ -23,7 +24,8 @@ cli
   .action(async (root: string) => {
     try {
       root = root ? path.resolve(root) : process.cwd();
-      await build(root);
+      const config = await resolveConfig(root, 'build', 'production');
+      await build(root, config);
     } catch (e) {
       console.log(e);
     }
