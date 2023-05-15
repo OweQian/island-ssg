@@ -1,12 +1,18 @@
 import { loadConfigFromFile } from 'vite';
 import path from 'path';
 import fs from 'fs-extra';
-import { IUserConfig } from '../shared/types';
+import { IUserConfig } from 'shared/types';
 
 type RawConfig =
   | IUserConfig
   | Promise<IUserConfig>
   | (() => IUserConfig | Promise<IUserConfig>);
+
+export interface ISiteConfig {
+  root: string;
+  configPath: string;
+  siteData: IUserConfig;
+}
 
 const getUserConfigPath = (root: string) => {
   try {
@@ -19,7 +25,8 @@ const getUserConfigPath = (root: string) => {
     throw e;
   }
 };
-export const resolveConfig = async (
+
+export const resolveUserConfig = async (
   root: string,
   command: 'serve' | 'build',
   mode: 'development' | 'production'
@@ -46,4 +53,30 @@ export const resolveConfig = async (
   } else {
     return [configPath, {} as IUserConfig] as const;
   }
+};
+
+export const resolveSiteData = (userConfig: IUserConfig): IUserConfig => {
+  return {
+    title: userConfig?.title || 'Island.js',
+    description: userConfig?.description || 'SSG Framework',
+    themeConfig: userConfig?.themeConfig || {},
+    vite: userConfig?.vite || {}
+  };
+};
+
+export const resolveConfig = async (
+  root: string,
+  command: 'serve' | 'build',
+  mode: 'development' | 'production'
+): Promise<ISiteConfig> => {
+  const [configPath, userConfig] = await resolveUserConfig(root, command, mode);
+  return {
+    root,
+    configPath,
+    siteData: resolveSiteData(userConfig as IUserConfig)
+  };
+};
+
+export const defineConfig = (config: IUserConfig) => {
+  return config;
 };

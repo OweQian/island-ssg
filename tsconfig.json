@@ -5,6 +5,7 @@
     "module": "commonjs",
     "rootDir": ".",
     "jsx": "react-jsx",
+    "baseUrl": "src",
     "esModuleInterop": true,
   }
 }
